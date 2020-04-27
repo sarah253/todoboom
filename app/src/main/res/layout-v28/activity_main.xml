@@ -31,7 +31,6 @@
         android:layout_marginTop="5dp"
         android:autofillHints="@string/new_string"
         android:hint="@string/new_string"
-        android:imeOptions="flagNoExtractUi"
         android:inputType="textMultiLine"
         android:backgroundTint="#367AB1"
         android:textCursorDrawable="@color/black"

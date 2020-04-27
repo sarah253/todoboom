@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">todoboom</string>
-    <string name="new_string">write here</string>
+    <string name="new_string">type here</string>
     <string name="Button_text">create</string>
+    <string name="todo">task todo</string>
+
 </resources>
