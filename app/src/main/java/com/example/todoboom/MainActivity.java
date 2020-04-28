@@ -48,17 +48,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putCharSequence("EDIT_TEXT", editText.getText());
+        outState.putCharSequence("Edit_Text", editText.getText());
         outState.putParcelableArrayList("items",(ArrayList<? extends Parcelable>) todoList);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        editText.setText(savedInstanceState.getCharSequence("EDIT_TEXT"));
+        editText.setText(savedInstanceState.getCharSequence("Edit_Text"));
         List<Todo> list = savedInstanceState.getParcelableArrayList("items");
         for (int i = 0 ; i <  list.size() ; i ++){
             Todo taskToAdd = list.get(i);
