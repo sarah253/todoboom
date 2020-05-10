@@ -1,5 +1,6 @@
 package com.example.todoboom;
 
+import com.google.gson.Gson;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +12,8 @@ import android.widget.EditText;
 import android.os.Bundle;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.List;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
     private EditText editText;
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter item_adapter;
     private ArrayList<Todo> todoList = new ArrayList<>();
+    private static final String list_size = "LIST_SIZE";
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +51,40 @@ public class MainActivity extends AppCompatActivity {
                 item_adapter.notifyDataSetChanged();
             }
         });
+        //get todo list
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        todoList.clear();
+        getTodoList();
     }
-
+    private void getTodoList(){
+        Gson gson = new Gson();
+        int size = sp.getInt(list_size,0);
+        for(int i =0; i < size;i++){
+            String stored_item = sp.getString("place"+i,null);
+            Todo item = gson.fromJson(stored_item,Todo.class);
+            todoList.add(item);
+            item_adapter.notifyDataSetChanged();
+        }
+    }
+    private void saveTodoList(){
+        Gson gson = new Gson();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putInt(list_size,todoList.size()).apply();
+        for(int i = 0; i < todoList.size();i++){
+            prefs.edit().putString("place"+i, gson.toJson(todoList.get(i))).apply();
+        }
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putCharSequence("Edit_Text", editText.getText());
-        outState.putParcelableArrayList("items",(ArrayList<? extends Parcelable>) todoList);
+        saveTodoList();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         editText.setText(savedInstanceState.getCharSequence("Edit_Text"));
-        List<Todo> list = savedInstanceState.getParcelableArrayList("items");
-        for (int i = 0 ; i <  list.size() ; i ++){
-            Todo taskToAdd = list.get(i);
-            todoList.add(taskToAdd);
-            item_adapter.notifyDataSetChanged();
-        }
+
     }
 }
