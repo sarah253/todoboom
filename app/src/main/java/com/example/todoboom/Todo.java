@@ -1,50 +1,41 @@
 package com.example.todoboom;
 
-import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.UUID;
 
-public class Todo implements Parcelable {
+public class Todo  {
 
+    public static ArrayList<Todo> todoList = new ArrayList<>();
     private String description;
     private boolean isDone;
+    private String creation_timestamp;
+    private String edit_timestamp;
+    private String id;
+    private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
 
-    Todo(String message){
+    public Todo () {}
+
+    public Todo(String message){
         this.description = message;
         this.isDone = false;
-    }
-    private Todo(Parcel in) {
-        description = in.readString();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            isDone = in.readBoolean();
-        }
-    }
-    public void setIdDone(){
-        this.isDone = true;
-    }
-    boolean getisDone(){
-        return this.isDone;
-    }
-    String getMessage() {
-        return description;
+        this.creation_timestamp = simpleDateFormat.format(new Date());
+        this.edit_timestamp = this.creation_timestamp;
+        this.id = UUID.randomUUID().toString();
+        todoList.add(this);
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+    public void setEditNow(){this.edit_timestamp = simpleDateFormat.format(new Date());}
+    //getters
+    public boolean getIsDone(){ return this.isDone; }
+    public String getDescription() {return description;}
+    public String getCreation_timestamp(){return  creation_timestamp;}
+    public String getEdit_timestamp(){return edit_timestamp;}
+    public String getId(){return id;}
+    //setters
+    public void setDescription(String new_description){this.description = new_description;}
+    public void setIsDone(boolean bool){this.isDone = bool;}
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeValue(isDone);
-    }
-    public static final Parcelable.Creator<Todo> CREATOR = new Parcelable.Creator<Todo>() {
-        public Todo createFromParcel(Parcel in) {
-            return new Todo(in);
-        }
-        public Todo[] newArray(int size) {
-            return new Todo[size];
-        }
-    };
 }

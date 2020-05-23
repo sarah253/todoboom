@@ -1,26 +1,24 @@
 package com.example.todoboom;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 
 public class Todo_item_Adapter extends RecyclerView.Adapter<Todo_item_Adapter.TodoViewHolder> {
-    private ArrayList<Todo> todoList;
+    private ArrayList<Todo> todoList = new ArrayList<>();
+    private MainActivity mainActivity;
 
-    public Todo_item_Adapter(ArrayList<Todo> list)
+    Todo_item_Adapter(MainActivity mainActivity)
+
     {
-        this.todoList = list;
+        this.mainActivity = mainActivity;
     }
 
     @NonNull
@@ -33,23 +31,25 @@ public class Todo_item_Adapter extends RecyclerView.Adapter<Todo_item_Adapter.To
     }
 
     @Override
-    public void onBindViewHolder(final TodoViewHolder holder, int position) {
+    public void onBindViewHolder(final TodoViewHolder holder, final int position) {
         final Todo item = todoList.get(position);
-        holder.description.setText(todoList.get(position).getMessage());
-        holder.isDone.setChecked(item.getisDone());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!holder.isDone.isChecked()){
-                    item.setIdDone();
-                    holder.isDone.setChecked(true);
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(holder.itemView.getContext(),
-                            "TODO " +  item.getMessage() +" is now DONE. BOOM!!", duration);
-                    toast.show();
-                }
-            }
-        });
+        holder.description.setText(todoList.get(position).getDescription());
+        holder.isDone.setChecked(item.getIsDone());
+       holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+                mainActivity.startnewactivity(position);
+               //when clicked open new activity for the task (completed or not completed)
+           }
+       });
+    }
+
+    void setTodoList(ArrayList<Todo> arrayList, boolean dataChanged){
+        todoList.clear();
+        todoList.addAll(arrayList);
+        if(dataChanged){
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -61,40 +61,12 @@ public class Todo_item_Adapter extends RecyclerView.Adapter<Todo_item_Adapter.To
     public class TodoViewHolder extends RecyclerView.ViewHolder{
         TextView description;
         CheckBox isDone;
-        TodoViewHolder(View view) {
+        ConstraintLayout constraintLayout;
+        TodoViewHolder(@NonNull View view) {
             super(view);
             description = view.findViewById(R.id.description);
             isDone = view.findViewById(R.id.is_done);
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(final View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-                    builder.setTitle(R.string.remove).setMessage(R.string.assurance);
-                    builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            todoList.remove(getAdapterPosition());
-                            notifyItemRemoved(getAdapterPosition());
-                            notifyItemRangeChanged(getAdapterPosition(),todoList.size());
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(v.getContext(),
-                                    "Item  " +  description.getText() +" was removed!!", duration);
-                            toast.show();
-                        }
-                    });
-
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //do nothing
-                        }
-                    });
-                    AlertDialog alertdialog = builder.create();
-                    alertdialog.show();
-                    return false;
-                }
-            });
+            constraintLayout = view.findViewById(R.id.main_layout);
         }
     }
-
 }

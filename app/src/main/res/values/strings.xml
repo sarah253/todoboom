@@ -5,4 +5,11 @@
     <string name="todo">task todo</string>
     <string name="remove">Remove conformation</string>
     <string name="assurance">Are you sure you want to delete this?</string>
+    <string name="editTodo">edit task</string>
+    <string name="saveButton">apply changes</string>
+    <string name="doneButton">Done</string>
+    <string name="undoneButton">UN Mark</string>
+    <string name="deleteButton">Delete</string>
+    <string name="completedTodo">Completed Task</string>
+    <string name="nonCompletedTodo">Uncompleted Todo Task</string>
 </resources>
